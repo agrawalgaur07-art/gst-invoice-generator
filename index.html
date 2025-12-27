@@ -6,7 +6,7 @@
 <title>GST Invoice Generator - Singhal Hardware</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; }
+body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; }
 .container { max-width: 1400px; margin: 0 auto; }
 .header { text-align: center; color: white; margin-bottom: 30px; }
 .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
@@ -33,33 +33,219 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
 .btn-secondary { background: #34495e; color: white; }
 .btn-secondary:hover { background: #2c3e50; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(52, 73, 94, 0.4); }
 .invoice-preview { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-top: 30px; display: none; }
-.invoice-container { background: white; padding: 40px; max-width: 900px; margin: 0 auto; border: 2px solid #333; font-size: 0.9em; }
-.inv-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
-.inv-header h1 { font-size: 2em; margin-bottom: 5px; }
-.inv-info { margin-bottom: 15px; font-size: 0.85em; }
-.inv-info p { margin: 3px 0; }
-.inv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-.inv-section { border: 1px solid #333; padding: 12px; }
-.inv-section h3 { font-size: 1em; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-.inv-section p { margin: 4px 0; font-size: 0.85em; }
-.inv-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-.inv-table th, .inv-table td { border: 1px solid #333; padding: 6px; text-align: left; font-size: 0.85em; }
-.inv-table th { background: #f0f0f0; font-weight: 600; }
-.inv-table td.right { text-align: right; }
-.inv-table tr.bold { font-weight: bold; }
-.inv-words { margin: 12px 0; padding: 8px; background: #f8f9fa; border: 1px solid #333; font-size: 0.85em; }
-.inv-tax { margin-top: 15px; }
-.tax-table { width: 100%; border-collapse: collapse; font-size: 0.8em; }
-.tax-table th, .tax-table td { border: 1px solid #333; padding: 5px; text-align: center; }
-.tax-table th { background: #f0f0f0; font-weight: 600; }
-.inv-bank { margin: 12px 0; padding: 8px; border: 1px solid #333; font-size: 0.8em; }
-.inv-bank p { margin: 3px 0; }
-.inv-decl { margin-top: 15px; padding: 8px; border: 1px solid #333; font-size: 0.75em; }
-.inv-sign { text-align: right; margin-top: 25px; padding-top: 15px; border-top: 1px solid #333; }
-.inv-footer { text-align: center; margin-top: 15px; font-size: 0.8em; font-style: italic; }
-.inv-footer p { margin: 3px 0; }
-@media print { body { background: white; } .form-section, .actions { display: none; } .invoice-preview { box-shadow: none; padding: 0; } }
-@media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .actions { flex-direction: column; } .btn-primary, .btn-secondary { width: 100%; } .inv-grid { grid-template-columns: 1fr; } }
+
+/* Invoice Styles - Exact Match to Sample */
+.invoice-container { 
+  background: white; 
+  padding: 20px; 
+  max-width: 210mm; 
+  margin: 0 auto; 
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.3;
+  color: #000;
+}
+.inv-header { 
+  text-align: center; 
+  border-bottom: 1px solid #000;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.inv-header h1 { 
+  font-size: 18px; 
+  font-weight: bold;
+  margin-bottom: 0;
+}
+.inv-header .e-invoice {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 10px;
+}
+.inv-irn-section {
+  margin-bottom: 10px;
+  font-size: 10px;
+}
+.inv-irn-section p {
+  margin: 2px 0;
+}
+.inv-main-grid {
+  display: table;
+  width: 100%;
+  border: 1px solid #000;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+.inv-left-col {
+  display: table-cell;
+  width: 50%;
+  border-right: 1px solid #000;
+  padding: 8px;
+  vertical-align: top;
+}
+.inv-right-col {
+  display: table-cell;
+  width: 50%;
+  padding: 8px;
+  vertical-align: top;
+}
+.inv-section-title {
+  font-weight: bold;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+.inv-company-name {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 3px;
+}
+.inv-detail-line {
+  margin: 2px 0;
+  font-size: 10px;
+}
+.inv-consignee-section {
+  border-top: 1px solid #000;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+.inv-buyer-section {
+  border: 1px solid #000;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+.inv-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+  font-size: 10px;
+}
+.inv-items-table th {
+  border: 1px solid #000;
+  padding: 5px;
+  background: #f0f0f0;
+  font-weight: bold;
+  text-align: center;
+}
+.inv-items-table td {
+  border: 1px solid #000;
+  padding: 5px;
+  text-align: left;
+}
+.inv-items-table td.center {
+  text-align: center;
+}
+.inv-items-table td.right {
+  text-align: right;
+}
+.inv-items-table .item-row {
+  height: 80px;
+  vertical-align: top;
+}
+.inv-items-table .tax-row {
+  font-style: italic;
+  text-align: right;
+}
+.inv-items-table .total-row {
+  font-weight: bold;
+}
+.inv-amount-words {
+  border: 1px solid #000;
+  border-top: none;
+  padding: 5px 8px;
+  font-size: 10px;
+  margin-bottom: 10px;
+}
+.inv-amount-words strong {
+  font-weight: bold;
+}
+.inv-eoe {
+  text-align: right;
+  font-style: italic;
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+.inv-tax-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+  font-size: 10px;
+}
+.inv-tax-table th {
+  border: 1px solid #000;
+  padding: 4px;
+  background: #f0f0f0;
+  font-weight: bold;
+  text-align: center;
+}
+.inv-tax-table td {
+  border: 1px solid #000;
+  padding: 4px;
+  text-align: center;
+}
+.inv-tax-table .total-row {
+  font-weight: bold;
+}
+.inv-tax-words {
+  border: 1px solid #000;
+  padding: 5px 8px;
+  font-size: 10px;
+  margin-bottom: 10px;
+}
+.inv-bottom-section {
+  display: table;
+  width: 100%;
+  border: 1px solid #000;
+  border-collapse: collapse;
+}
+.inv-bank-col {
+  display: table-cell;
+  width: 50%;
+  border-right: 1px solid #000;
+  padding: 8px;
+  vertical-align: top;
+  font-size: 10px;
+}
+.inv-signature-col {
+  display: table-cell;
+  width: 50%;
+  padding: 8px;
+  vertical-align: top;
+  font-size: 10px;
+}
+.inv-declaration {
+  border: 1px solid #000;
+  border-top: none;
+  padding: 8px;
+  font-size: 9px;
+  margin-bottom: 0;
+}
+.inv-footer {
+  text-align: center;
+  font-size: 9px;
+  margin-top: 10px;
+  font-style: italic;
+}
+.inv-footer p {
+  margin: 2px 0;
+}
+.inv-signature-area {
+  min-height: 60px;
+  text-align: right;
+  padding-top: 40px;
+}
+
+@media print {
+  body { background: white; padding: 0; }
+  .form-section, .actions, .header { display: none; }
+  .invoice-preview { box-shadow: none; padding: 0; border-radius: 0; }
+  .invoice-container { padding: 10mm; }
+}
+@media (max-width: 768px) { 
+  .form-grid { grid-template-columns: 1fr; } 
+  .actions { flex-direction: column; } 
+  .btn-primary, .btn-secondary { width: 100%; }
+}
 </style>
 </head>
 <body>
@@ -79,7 +265,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
 <div class="form-group"><label>Address Line 1</label><input type="text" id="companyAddress1" value="NEAR CHANDNI CHOWK"></div>
 <div class="form-group"><label>Address Line 2</label><input type="text" id="companyAddress2" value="RING ROAD AMBIKAPUR"></div>
 <div class="form-group"><label>GSTIN/UIN</label><input type="text" id="companyGSTIN" value="22AGEPA7785N1Z4"></div>
-<div class="form-group"><label>State Name & Code</label><input type="text" id="companyState" value="Chhattisgarh, Code: 22"></div>
+<div class="form-group"><label>State Name & Code</label><input type="text" id="companyState" value="Chhattisgarh, Code :22"></div>
 <div class="form-group"><label>Email</label><input type="email" id="companyEmail" value="arujagrawal83@ymail.com"></div>
 </div>
 </div>
@@ -101,9 +287,9 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
 <div class="form-grid">
 <div class="form-group"><label>Buyer Name</label><input type="text" id="buyerName" value="ARUN AGRAWAL"></div>
 <div class="form-group"><label>Address Line 1</label><input type="text" id="buyerAddress1" value="OPPOSITE ROOP DEV MARKET"></div>
-<div class="form-group"><label>Address Line 2</label><input type="text" id="buyerAddress2" value="DEVIGANJ ROAD, AMBIKAPUR"></div>
+<div class="form-group"><label>Address Line 2</label><input type="text" id="buyerAddress2" value="DEVIGANJ ROAD, AMBIKAPUR, Surguja"></div>
 <div class="form-group"><label>GSTIN/UIN</label><input type="text" id="buyerGSTIN" value="22AHLPA9765E1ZE"></div>
-<div class="form-group"><label>State Name & Code</label><input type="text" id="buyerState" value="Chhattisgarh, Code: 22"></div>
+<div class="form-group"><label>State Name & Code</label><input type="text" id="buyerState" value="Chhattisgarh, Code :22"></div>
 </div>
 </div>
 
@@ -113,7 +299,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
 <div class="form-group"><label>Dispatched Through</label><input type="text" id="dispatchedThrough" value="Pickup"></div>
 <div class="form-group"><label>Destination</label><input type="text" id="destination" value="Ambikapur"></div>
 <div class="form-group"><label>Vehicle No</label><input type="text" id="vehicleNo" value="UP64BT3582"></div>
-<div class="form-group"><label>Bill of Lading/LR-RR No.</label><input type="text" id="billOfLading" value=""></div>
+<div class="form-group"><label>Bill of Lading/LR-RR No.</label><input type="text" id="billOfLading" value="dt. 12-Jul-25"></div>
 </div>
 </div>
 
@@ -258,21 +444,51 @@ function generateInvoice() {
   
   let itemsHTML = '';
   items.forEach((item, i) => {
-    itemsHTML += `<tr><td>${i+1}</td><td>${item.desc}</td><td>${item.hsn}</td><td>${item.qty.toFixed(2)} ${item.unit}</td><td>${item.rate.toFixed(2)}</td><td>${item.unit}</td><td class="right">${item.amount.toFixed(2)}</td></tr>`;
+    itemsHTML += `<tr class="item-row">
+      <td class="center">${i+1}</td>
+      <td>${item.desc}</td>
+      <td class="center">${item.hsn}</td>
+      <td class="center">${item.qty.toFixed(2)} ${item.unit}</td>
+      <td class="right">${item.rate.toFixed(2)}</td>
+      <td class="center">${item.unit}</td>
+      <td class="right">${item.amount.toFixed(2)}</td>
+    </tr>`;
   });
   
+  // Add empty rows if needed to match sample
+  const emptyRowsNeeded = Math.max(0, 1 - items.length);
+  for (let i = 0; i < emptyRowsNeeded; i++) {
+    itemsHTML += `<tr class="item-row"><td class="center"></td><td></td><td class="center"></td><td class="center"></td><td class="right"></td><td class="center"></td><td class="right"></td></tr>`;
+  }
+  
   itemsHTML += `
-    <tr><td colspan="6" class="right"><i>Cgst</i></td><td class="right">${totalCGST.toFixed(2)}</td></tr>
-    <tr><td colspan="6" class="right"><i>Sgst</i></td><td class="right">${totalSGST.toFixed(2)}</td></tr>
-    <tr><td colspan="6" class="right"><i>Round off</i></td><td class="right">${roundOff >= 0 ? '' : '(-)'}${Math.abs(roundOff).toFixed(2)}</td></tr>
-    <tr class="bold"><td colspan="3">Total</td><td>${totalQty.toFixed(2)} ${items[0]?.unit || 'pcs'}</td><td colspan="2"></td><td class="right">₹ ${roundedTotal.toFixed(2)}</td></tr>
+    <tr><td colspan="6" class="right tax-row">Cgst</td><td class="right">${totalCGST.toFixed(2)}</td></tr>
+    <tr><td colspan="6" class="right tax-row">Sgst</td><td class="right">${totalSGST.toFixed(2)}</td></tr>
+    <tr><td colspan="6" class="right tax-row">Round off</td><td class="right">${roundOff >= 0 ? '' : '(-)'}${Math.abs(roundOff).toFixed(2)}</td></tr>
+    <tr class="total-row"><td colspan="3" class="right">Total</td><td class="center">${totalQty.toFixed(2)} ${items[0]?.unit || 'pcs'}</td><td colspan="2"></td><td class="right">₹ ${roundedTotal.toFixed(2)}</td></tr>
   `;
   
   let taxHTML = '';
   items.forEach(item => {
-    taxHTML += `<tr><td>${item.hsn}</td><td>${item.amount.toFixed(2)}</td><td>${item.cgstRate}%</td><td>${item.cgstAmount.toFixed(2)}</td><td>${item.sgstRate}%</td><td>${item.sgstAmount.toFixed(2)}</td><td>${(item.amount + item.cgstAmount + item.sgstAmount).toFixed(2)}</td></tr>`;
+    taxHTML += `<tr>
+      <td>${item.hsn}</td>
+      <td class="right">${item.amount.toFixed(2)}</td>
+      <td>${item.cgstRate}%</td>
+      <td class="right">${item.cgstAmount.toFixed(2)}</td>
+      <td>${item.sgstRate}%</td>
+      <td class="right">${item.sgstAmount.toFixed(2)}</td>
+      <td class="right">${(item.amount + item.cgstAmount + item.sgstAmount).toFixed(2)}</td>
+    </tr>`;
   });
-  taxHTML += `<tr class="bold"><td>Total</td><td>${totalAmount.toFixed(2)}</td><td></td><td>${totalCGST.toFixed(2)}</td><td></td><td>${totalSGST.toFixed(2)}</td><td>${(totalAmount + totalCGST + totalSGST).toFixed(2)}</td></tr>`;
+  taxHTML += `<tr class="total-row">
+    <td><strong>Total</strong></td>
+    <td class="right"><strong>${totalAmount.toFixed(2)}</strong></td>
+    <td></td>
+    <td class="right"><strong>${totalCGST.toFixed(2)}</strong></td>
+    <td></td>
+    <td class="right"><strong>${totalSGST.toFixed(2)}</strong></td>
+    <td class="right"><strong>${(totalAmount + totalCGST + totalSGST).toFixed(2)}</strong></td>
+  </tr>`;
   
   const formatDate = (d) => {
     const date = new Date(d);
@@ -281,61 +497,148 @@ function generateInvoice() {
   };
   
   const invoiceHTML = `
-    <div class="inv-header"><h1>INVOICE</h1><p style="text-align: right; font-size: 0.9em;">e-Invoice</p></div>
-    <div class="inv-info">
-      <p><b>IRN:</b> ${document.getElementById('irn').value}</p>
-      <p><b>Ack No.:</b> ${document.getElementById('ackNo').value}</p>
-      <p><b>Ack Date:</b> ${formatDate(document.getElementById('ackDate').value)}</p>
+    <div class="inv-header">
+      <h1>INVOICE</h1>
+      <div class="e-invoice">e-Invoice</div>
     </div>
-    <div class="inv-grid">
-      <div class="inv-section">
-        <h3>${document.getElementById('companyName').value}</h3>
-        <p>${document.getElementById('companyAddress1').value}</p>
-        <p>${document.getElementById('companyAddress2').value}</p>
-        <p><b>GSTIN/UIN:</b> ${document.getElementById('companyGSTIN').value}</p>
-        <p><b>State Name:</b> ${document.getElementById('companyState').value}</p>
-        <p><b>E-Mail:</b> ${document.getElementById('companyEmail').value}</p>
-        <h3 style="margin-top: 15px;">Consignee (Ship to)</h3>
-        <p><b>${document.getElementById('buyerName').value}</b></p>
-        <p>${document.getElementById('buyerAddress1').value}</p>
-        <p>${document.getElementById('buyerAddress2').value}</p>
-        <p><b>GSTIN/UIN:</b> ${document.getElementById('buyerGSTIN').value}</p>
-        <p><b>State Name:</b> ${document.getElementById('buyerState').value}</p>
+    
+    <div class="inv-irn-section">
+      <p><strong>IRN</strong> : ${document.getElementById('irn').value}</p>
+      <p><strong>Ack No.</strong> : ${document.getElementById('ackNo').value}</p>
+      <p><strong>Ack Date</strong> : ${formatDate(document.getElementById('ackDate').value)}</p>
+    </div>
+    
+    <div class="inv-main-grid">
+      <div class="inv-left-col">
+        <div class="inv-company-name">${document.getElementById('companyName').value}</div>
+        <div class="inv-detail-line">${document.getElementById('companyAddress1').value}</div>
+        <div class="inv-detail-line">${document.getElementById('companyAddress2').value}</div>
+        <div class="inv-detail-line"><strong>GSTIN/UIN:</strong> ${document.getElementById('companyGSTIN').value}</div>
+        <div class="inv-detail-line"><strong>State Name</strong> : ${document.getElementById('companyState').value}</div>
+        <div class="inv-detail-line"><strong>E-Mail :</strong> ${document.getElementById('companyEmail').value}</div>
+        
+        <div class="inv-consignee-section">
+          <div class="inv-section-title">Consignee (Ship to)</div>
+          <div class="inv-company-name">${document.getElementById('buyerName').value}</div>
+          <div class="inv-detail-line">${document.getElementById('buyerAddress1').value}</div>
+          <div class="inv-detail-line">${document.getElementById('buyerAddress2').value}</div>
+          <div class="inv-detail-line"><strong>GSTIN/UIN</strong> : ${document.getElementById('buyerGSTIN').value}</div>
+          <div class="inv-detail-line"><strong>State Name</strong> : ${document.getElementById('buyerState').value}</div>
+        </div>
       </div>
-      <div class="inv-section">
-        <p><b>Invoice No.:</b> ${document.getElementById('invoiceNo').value}</p>
-        <p><b>Dated:</b> ${formatDate(document.getElementById('invoiceDate').value)}</p>
-        <p><b>Delivery Note:</b></p>
-        <p><b>Mode/Terms of Payment:</b> ${document.getElementById('paymentTerms').value}</p>
-        <p><b>Reference No. & Date:</b></p>
-        <p><b>Other References:</b></p>
-        <p><b>Buyer's Order No.:</b></p>
-        <p><b>Dated:</b></p>
-        <p><b>Dispatch Doc No.:</b></p>
-        <p><b>Delivery Note Date:</b></p>
-        <p><b>Dispatched through:</b> ${document.getElementById('dispatchedThrough').value}</p>
-        <p><b>Destination:</b> ${document.getElementById('destination').value}</p>
-        <p><b>Bill of Lading/LR-RR No.:</b> ${document.getElementById('billOfLading').value}</p>
-        <p><b>Motor Vehicle No:</b> ${document.getElementById('vehicleNo').value}</p>
-        <p><b>Terms of Delivery:</b></p>
+      
+      <div class="inv-right-col">
+        <div class="inv-detail-line"><strong>Invoice No.</strong></div>
+        <div class="inv-detail-line">${document.getElementById('invoiceNo').value}</div>
+        <div class="inv-detail-line"><strong>Delivery Note</strong></div>
+        <div class="inv-detail-line"><strong>Mode/Terms of Payment</strong></div>
+        <div class="inv-detail-line">${document.getElementById('paymentTerms').value}</div>
+        <div class="inv-detail-line"><strong>Reference No. & Date.</strong></div>
+        <div class="inv-detail-line"><strong>Other References</strong></div>
+        <div class="inv-detail-line"><strong>Buyer's Order No.</strong></div>
+        <div class="inv-detail-line"><strong>Dated</strong></div>
+        <div class="inv-detail-line"><strong>Dispatch Doc No.</strong></div>
+        <div class="inv-detail-line"><strong>Delivery Note Date</strong></div>
+        <div class="inv-detail-line"><strong>Dispatched through</strong></div>
+        <div class="inv-detail-line">${document.getElementById('dispatchedThrough').value}</div>
+        <div class="inv-detail-line"><strong>Bill of Lading/LR-RR No.</strong></div>
+        <div class="inv-detail-line">${document.getElementById('billOfLading').value}</div>
+        <div class="inv-detail-line"><strong>Terms of Delivery</strong></div>
+        
+        <div style="margin-top: 8px;">
+          <div class="inv-detail-line"><strong>Dated</strong></div>
+          <div class="inv-detail-line">${formatDate(document.getElementById('invoiceDate').value)}</div>
+          <div class="inv-detail-line"><strong>Destination</strong></div>
+          <div class="inv-detail-line">${document.getElementById('destination').value}</div>
+          <div class="inv-detail-line"><strong>Motor Vehicle No</strong></div>
+          <div class="inv-detail-line">${document.getElementById('vehicleNo').value}</div>
+        </div>
       </div>
     </div>
-    <div class="inv-section">
-      <h3>Buyer (Bill to)</h3>
-      <p><b>${document.getElementById('buyerName').value}</b></p>
-      <p>${document.getElementById('buyerAddress1').value}</p>
-      <p>${document.getElementById('buyerAddress2').value}</p>
-      <p><b>GSTIN/UIN:</b> ${document.getElementById('buyerGSTIN').value}</p>
-      <p><b>State Name:</b> ${document.getElementById('buyerState').value}</p>
+    
+    <div class="inv-buyer-section">
+      <div class="inv-section-title">Buyer (Bill to)</div>
+      <div class="inv-company-name">${document.getElementById('buyerName').value}</div>
+      <div class="inv-detail-line">${document.getElementById('buyerAddress1').value}</div>
+      <div class="inv-detail-line">${document.getElementById('buyerAddress2').value}</div>
+      <div class="inv-detail-line"><strong>GSTIN/UIN</strong> : ${document.getElementById('buyerGSTIN').value}</div>
+      <div class="inv-detail-line"><strong>State Name</strong> : ${document.getElementById('buyerState').value}</div>
     </div>
-    <table class="inv-table"><thead><tr><th>Sl</th><th>Description of Goods</th><th>HSN/SAC</th><th>Quantity</th><th>Rate</th><th>per</th><th>Amount</th></tr></thead><tbody>${itemsHTML}</tbody></table>
-    <div class="inv-words"><b>Amount Chargeable (in words):</b><br>INR ${numberToWords(roundedTotal)} Only</div>
-    <div class="inv-tax"><p style="text-align:right; font-style: italic; margin-bottom: 5px;">E & O.E</p><table class="tax-table"><thead><tr><th rowspan="2">HSN/SAC</th><th rowspan="2">Taxable Value</th><th colspan="2">CGST</th><th colspan="2">SGST/UTGST</th><th rowspan="2">Total Tax Amount</th></tr><tr><th>Rate</th><th>Amount</th><th>Rate</th><th>Amount</th></tr></thead><tbody>${taxHTML}</tbody></table></div>
-    <div class="inv-words" style="margin-top: 15px;"><b>Tax Amount (in words):</b> INR ${numberToWords(Math.round(totalCGST + totalSGST))} Only</div>
-    <div class="inv-bank"><p><b>Company's Bank Details</b></p><p><b>A/c Holder's Name:</b> ${document.getElementById('companyName').value}</p><p><b>Bank Name:</b> ${document.getElementById('bankName').value}</p><p><b>A/c No.:</b> ${document.getElementById('accountNo').value}</p><p><b>Branch & IFS Code:</b> ${document.getElementById('ifscCode').value}</p></div>
-    <div class="inv-decl"><p><b>Declaration</b></p><p>We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.</p></div>
-    <div class="inv-sign"><p><b>for ${document.getElementById('companyName').value}</b></p><br><br><p>Authorised Signatory</p></div>
-    <div class="inv-footer"><p>SUBJECT TO ALL JURISDICTION IN AMBIKAPUR COURT JURISDICTION</p><p>This is a Computer Generated Invoice</p></div>
+    
+    <table class="inv-items-table">
+      <thead>
+        <tr>
+          <th style="width: 5%;">Sl</th>
+          <th style="width: 30%;">Description of Goods</th>
+          <th style="width: 10%;">HSN/SAC</th>
+          <th style="width: 10%;">Quantity</th>
+          <th style="width: 10%;">Rate</th>
+          <th style="width: 5%;">per</th>
+          <th style="width: 15%;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsHTML}
+      </tbody>
+    </table>
+    
+    <div class="inv-amount-words">
+      <strong>Amount Chargeable (in words)</strong><br>
+      <strong>INR ${numberToWords(roundedTotal)} Only</strong>
+    </div>
+    
+    <div class="inv-eoe">E & O.E</div>
+    
+    <table class="inv-tax-table">
+      <thead>
+        <tr>
+          <th rowspan="2" style="width: 15%;">HSN/SAC</th>
+          <th rowspan="2" style="width: 15%;">Taxable<br>Value</th>
+          <th colspan="2">CGST</th>
+          <th colspan="2">SGST/UTGST</th>
+          <th rowspan="2" style="width: 15%;">Total<br>Tax Amount</th>
+        </tr>
+        <tr>
+          <th style="width: 10%;">Rate</th>
+          <th style="width: 12%;">Amount</th>
+          <th style="width: 10%;">Rate</th>
+          <th style="width: 12%;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${taxHTML}
+      </tbody>
+    </table>
+    
+    <div class="inv-tax-words">
+      <strong>Tax Amount (in words) :</strong> <strong>INR ${numberToWords(Math.round(totalCGST + totalSGST))} paisa Only</strong>
+    </div>
+    
+    <div class="inv-bottom-section">
+      <div class="inv-bank-col">
+        <div style="margin-bottom: 5px;"><strong>Company's Bank Details</strong></div>
+        <div class="inv-detail-line"><strong>A/c Holder's Name :</strong> ${document.getElementById('companyName').value.split(' ')[0]} HARDWARE 19-20</div>
+        <div class="inv-detail-line"><strong>Bank Name :</strong> ${document.getElementById('bankName').value}</div>
+        <div class="inv-detail-line"><strong>A/c No. :</strong> ${document.getElementById('accountNo').value}</div>
+        <div class="inv-detail-line"><strong>Branch & IFS Code :</strong> ${document.getElementById('ifscCode').value}</div>
+      </div>
+      <div class="inv-signature-col">
+        <div style="text-align: right; margin-bottom: 5px;"><strong>for ${document.getElementById('companyName').value}</strong></div>
+        <div class="inv-signature-area">
+          <div>Authorised Signatory</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="inv-declaration">
+      <strong>Declaration</strong><br>
+      We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.
+    </div>
+    
+    <div class="inv-footer">
+      <p>SUBJECT TO ALL JURISDICTION IN AMBIKAPUR COURT JURISDICTION</p>
+      <p>This is a Computer Generated Invoice</p>
+    </div>
   `;
   
   document.getElementById('invoiceContainer').innerHTML = invoiceHTML;
