@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GST Invoice Generator - Singhal Hardware</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; }
+.container { max-width: 1400px; margin: 0 auto; }
+.header { text-align: center; color: white; margin-bottom: 30px; }
+.header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+.header p { font-size: 1.2em; opacity: 0.9; }
+.form-section { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 30px; }
+.form-section h2 { color: #667eea; margin-bottom: 25px; font-size: 1.8em; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+.section-group { margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #667eea; }
+.section-group h3 { color: #333; margin-bottom: 15px; font-size: 1.3em; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+.form-group { display: flex; flex-direction: column; }
+.form-group label { font-weight: 600; margin-bottom: 5px; color: #555; font-size: 0.9em; }
+.form-group input { padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 1em; transition: all 0.3s; }
+.form-group input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+.item-row { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #e0e0e0; position: relative; }
+.item-row h4 { color: #667eea; margin-bottom: 10px; }
+.btn-remove { position: absolute; top: 10px; right: 10px; background: #ff4757; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; transition: all 0.3s; }
+.btn-remove:hover { background: #ff3838; transform: scale(1.05); }
+.btn-add { background: #2ecc71; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; width: 100%; margin-top: 10px; }
+.btn-add:hover { background: #27ae60; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3); }
+.actions { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+.btn-primary, .btn-secondary { flex: 1; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s; min-width: 200px; }
+.btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4); }
+.btn-secondary { background: #34495e; color: white; }
+.btn-secondary:hover { background: #2c3e50; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(52, 73, 94, 0.4); }
+.invoice-preview { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-top: 30px; display: none; }
+.invoice-container { background: white; padding: 40px; max-width: 900px; margin: 0 auto; border: 2px solid #333; font-size: 0.9em; }
+.inv-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+.inv-header h1 { font-size: 2em; margin-bottom: 5px; }
+.inv-info { margin-bottom: 15px; font-size: 0.85em; }
+.inv-info p { margin: 3px 0; }
+.inv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+.inv-section { border: 1px solid #333; padding: 12px; }
+.inv-section h3 { font-size: 1em; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+.inv-section p { margin: 4px 0; font-size: 0.85em; }
+.inv-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+.inv-table th, .inv-table td { border: 1px solid #333; padding: 6px; text-align: left; font-size: 0.85em; }
+.inv-table th { background: #f0f0f0; font-weight: 600; }
+.inv-table td.right { text-align: right; }
+.inv-table tr.bold { font-weight: bold; }
+.inv-words { margin: 12px 0; padding: 8px; background: #f8f9fa; border: 1px solid #333; font-size: 0.85em; }
+.inv-tax { margin-top: 15px; }
+.tax-table { width: 100%; border-collapse: collapse; font-size: 0.8em; }
+.tax-table th, .tax-table td { border: 1px solid #333; padding: 5px; text-align: center; }
+.tax-table th { background: #f0f0f0; font-weight: 600; }
+.inv-bank { margin: 12px 0; padding: 8px; border: 1px solid #333; font-size: 0.8em; }
+.inv-bank p { margin: 3px 0; }
+.inv-decl { margin-top: 15px; padding: 8px; border: 1px solid #333; font-size: 0.75em; }
+.inv-sign { text-align: right; margin-top: 25px; padding-top: 15px; border-top: 1px solid #333; }
+.inv-footer { text-align: center; margin-top: 15px; font-size: 0.8em; font-style: italic; }
+.inv-footer p { margin: 3px 0; }
+@media print { body { background: white; } .form-section, .actions { display: none; } .invoice-preview { box-shadow: none; padding: 0; } }
+@media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .actions { flex-direction: column; } .btn-primary, .btn-secondary { width: 100%; } .inv-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>📊 GST Invoice Generator</h1>
+<p>Professional Accounting Software - Based on Singhal Hardware Format</p>
+</div>
+
+<div class="form-section">
+<h2>Invoice Details</h2>
+
+<div class="section-group">
+<h3>Seller Details</h3>
+<div class="form-grid">
+<div class="form-group"><label>Company Name</label><input type="text" id="companyName" value="SINGHAL HARDWARE"></div>
+<div class="form-group"><label>Address Line 1</label><input type="text" id="companyAddress1" value="NEAR CHANDNI CHOWK"></div>
+<div class="form-group"><label>Address Line 2</label><input type="text" id="companyAddress2" value="RING ROAD AMBIKAPUR"></div>
+<div class="form-group"><label>GSTIN/UIN</label><input type="text" id="companyGSTIN" value="22AGEPA7785N1Z4"></div>
+<div class="form-group"><label>State Name & Code</label><input type="text" id="companyState" value="Chhattisgarh, Code: 22"></div>
+<div class="form-group"><label>Email</label><input type="email" id="companyEmail" value="arujagrawal83@ymail.com"></div>
+</div>
+</div>
+
+<div class="section-group">
+<h3>Invoice Information</h3>
+<div class="form-grid">
+<div class="form-group"><label>Invoice Number</label><input type="text" id="invoiceNo" value="731"></div>
+<div class="form-group"><label>Invoice Date</label><input type="date" id="invoiceDate"></div>
+<div class="form-group"><label>IRN</label><input type="text" id="irn" value=""></div>
+<div class="form-group"><label>Ack No.</label><input type="text" id="ackNo" value=""></div>
+<div class="form-group"><label>Ack Date</label><input type="date" id="ackDate"></div>
+<div class="form-group"><label>Payment Terms</label><input type="text" id="paymentTerms" value=""></div>
+</div>
+</div>
+
+<div class="section-group">
+<h3>Buyer Details (Bill To)</h3>
+<div class="form-grid">
+<div class="form-group"><label>Buyer Name</label><input type="text" id="buyerName" value="ARUN AGRAWAL"></div>
+<div class="form-group"><label>Address Line 1</label><input type="text" id="buyerAddress1" value="OPPOSITE ROOP DEV MARKET"></div>
+<div class="form-group"><label>Address Line 2</label><input type="text" id="buyerAddress2" value="DEVIGANJ ROAD, AMBIKAPUR"></div>
+<div class="form-group"><label>GSTIN/UIN</label><input type="text" id="buyerGSTIN" value="22AHLPA9765E1ZE"></div>
+<div class="form-group"><label>State Name & Code</label><input type="text" id="buyerState" value="Chhattisgarh, Code: 22"></div>
+</div>
+</div>
+
+<div class="section-group">
+<h3>Shipping & Delivery Details</h3>
+<div class="form-grid">
+<div class="form-group"><label>Dispatched Through</label><input type="text" id="dispatchedThrough" value="Pickup"></div>
+<div class="form-group"><label>Destination</label><input type="text" id="destination" value="Ambikapur"></div>
+<div class="form-group"><label>Vehicle No</label><input type="text" id="vehicleNo" value="UP64BT3582"></div>
+<div class="form-group"><label>Bill of Lading/LR-RR No.</label><input type="text" id="billOfLading" value=""></div>
+</div>
+</div>
+
+<div class="section-group">
+<h3>Bank Details</h3>
+<div class="form-grid">
+<div class="form-group"><label>Bank Name</label><input type="text" id="bankName" value="Bank of India-0073"></div>
+<div class="form-group"><label>A/c No.</label><input type="text" id="accountNo" value="336920110000014"></div>
+<div class="form-group"><label>Branch & IFSC Code</label><input type="text" id="ifscCode" value="Ambikapur & BKID0009380"></div>
+</div>
+</div>
+
+<div class="section-group">
+<h3>Invoice Items</h3>
+<div id="itemsContainer"></div>
+<button class="btn-add" onclick="addItem()">+ Add Item</button>
+</div>
+
+<div class="actions">
+<button class="btn-primary" onclick="generateInvoice()">🧾 Generate Invoice</button>
+<button class="btn-secondary" onclick="downloadPDF()">📥 Download PDF</button>
+<button class="btn-secondary" onclick="clearForm()">🔄 Clear Form</button>
+</div>
+</div>
+
+<div class="invoice-preview" id="invoicePreview">
+<div class="invoice-container" id="invoiceContainer"></div>
+</div>
+</div>
+
+<script>
+let itemCounter = 0;
+
+window.addEventListener('DOMContentLoaded', () => {
+  addItem();
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('invoiceDate').value = today;
+  document.getElementById('ackDate').value = today;
+});
+
+function addItem() {
+  itemCounter++;
+  const container = document.getElementById('itemsContainer');
+  const itemRow = document.createElement('div');
+  itemRow.className = 'item-row';
+  itemRow.id = `item-${itemCounter}`;
+  
+  itemRow.innerHTML = `
+    <h4>Item ${itemCounter}</h4>
+    <button class="btn-remove" onclick="removeItem(${itemCounter})">✕ Remove</button>
+    <div class="form-grid">
+      <div class="form-group"><label>Description of Goods</label><input type="text" id="desc-${itemCounter}" placeholder="e.g., Putty 40 Kg"></div>
+      <div class="form-group"><label>HSN/SAC Code</label><input type="text" id="hsn-${itemCounter}" placeholder="e.g., 32141000"></div>
+      <div class="form-group"><label>Quantity</label><input type="number" id="qty-${itemCounter}" step="0.01" value="1" onchange="calculateItem(${itemCounter})"></div>
+      <div class="form-group"><label>Unit</label><input type="text" id="unit-${itemCounter}" value="pcs" placeholder="pcs/kg/ltr"></div>
+      <div class="form-group"><label>Rate per Unit (₹)</label><input type="number" id="rate-${itemCounter}" step="0.01" value="0" onchange="calculateItem(${itemCounter})"></div>
+      <div class="form-group"><label>Amount (₹)</label><input type="number" id="amount-${itemCounter}" step="0.01" value="0" readonly></div>
+      <div class="form-group"><label>CGST Rate (%)</label><input type="number" id="cgst-rate-${itemCounter}" step="0.01" value="9" onchange="calculateItem(${itemCounter})"></div>
+      <div class="form-group"><label>SGST Rate (%)</label><input type="number" id="sgst-rate-${itemCounter}" step="0.01" value="9" onchange="calculateItem(${itemCounter})"></div>
+    </div>
+  `;
+  
+  container.appendChild(itemRow);
+}
+
+function removeItem(id) {
+  const item = document.getElementById(`item-${id}`);
+  if (item) item.remove();
+}
+
+function calculateItem(id) {
+  const qty = parseFloat(document.getElementById(`qty-${id}`).value) || 0;
+  const rate = parseFloat(document.getElementById(`rate-${id}`).value) || 0;
+  const amount = qty * rate;
+  document.getElementById(`amount-${id}`).value = amount.toFixed(2);
+}
+
+function numberToWords(num) {
+  const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+  const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+  const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+  
+  if (num === 0) return 'Zero';
+  let words = '';
+  
+  if (num >= 10000000) {
+    words += numberToWords(Math.floor(num / 10000000)) + ' Crore ';
+    num %= 10000000;
+  }
+  if (num >= 100000) {
+    words += numberToWords(Math.floor(num / 100000)) + ' Lakh ';
+    num %= 100000;
+  }
+  if (num >= 1000) {
+    words += numberToWords(Math.floor(num / 1000)) + ' Thousand ';
+    num %= 1000;
+  }
+  if (num >= 100) {
+    words += ones[Math.floor(num / 100)] + ' Hundred ';
+    num %= 100;
+  }
+  if (num >= 20) {
+    words += tens[Math.floor(num / 10)] + ' ';
+    num %= 10;
+  } else if (num >= 10) {
+    words += teens[num - 10] + ' ';
+    num = 0;
+  }
+  if (num > 0) words += ones[num] + ' ';
+  
+  return words.trim();
+}
+
+function generateInvoice() {
+  const items = [];
+  let totalAmount = 0, totalCGST = 0, totalSGST = 0, totalQty = 0;
+  
+  for (let i = 1; i <= itemCounter; i++) {
+    if (document.getElementById(`item-${i}`)) {
+      const desc = document.getElementById(`desc-${i}`).value;
+      const hsn = document.getElementById(`hsn-${i}`).value;
+      const qty = parseFloat(document.getElementById(`qty-${i}`).value) || 0;
+      const unit = document.getElementById(`unit-${i}`).value;
+      const rate = parseFloat(document.getElementById(`rate-${i}`).value) || 0;
+      const amount = parseFloat(document.getElementById(`amount-${i}`).value) || 0;
+      const cgstRate = parseFloat(document.getElementById(`cgst-rate-${i}`).value) || 0;
+      const sgstRate = parseFloat(document.getElementById(`sgst-rate-${i}`).value) || 0;
+      const cgstAmount = (amount * cgstRate) / 100;
+      const sgstAmount = (amount * sgstRate) / 100;
+      
+      items.push({ desc, hsn, qty, unit, rate, amount, cgstRate, cgstAmount, sgstRate, sgstAmount });
+      totalAmount += amount;
+      totalCGST += cgstAmount;
+      totalSGST += sgstAmount;
+      totalQty += qty;
+    }
+  }
+  
+  const totalBeforeRound = totalAmount + totalCGST + totalSGST;
+  const roundedTotal = Math.round(totalBeforeRound);
+  const roundOff = roundedTotal - totalBeforeRound;
+  
+  let itemsHTML = '';
+  items.forEach((item, i) => {
+    itemsHTML += `<tr><td>${i+1}</td><td>${item.desc}</td><td>${item.hsn}</td><td>${item.qty.toFixed(2)} ${item.unit}</td><td>${item.rate.toFixed(2)}</td><td>${item.unit}</td><td class="right">${item.amount.toFixed(2)}</td></tr>`;
+  });
+  
+  itemsHTML += `
+    <tr><td colspan="6" class="right"><i>Cgst</i></td><td class="right">${totalCGST.toFixed(2)}</td></tr>
+    <tr><td colspan="6" class="right"><i>Sgst</i></td><td class="right">${totalSGST.toFixed(2)}</td></tr>
+    <tr><td colspan="6" class="right"><i>Round off</i></td><td class="right">${roundOff >= 0 ? '' : '(-)'}${Math.abs(roundOff).toFixed(2)}</td></tr>
+    <tr class="bold"><td colspan="3">Total</td><td>${totalQty.toFixed(2)} ${items[0]?.unit || 'pcs'}</td><td colspan="2"></td><td class="right">₹ ${roundedTotal.toFixed(2)}</td></tr>
+  `;
+  
+  let taxHTML = '';
+  items.forEach(item => {
+    taxHTML += `<tr><td>${item.hsn}</td><td>${item.amount.toFixed(2)}</td><td>${item.cgstRate}%</td><td>${item.cgstAmount.toFixed(2)}</td><td>${item.sgstRate}%</td><td>${item.sgstAmount.toFixed(2)}</td><td>${(item.amount + item.cgstAmount + item.sgstAmount).toFixed(2)}</td></tr>`;
+  });
+  taxHTML += `<tr class="bold"><td>Total</td><td>${totalAmount.toFixed(2)}</td><td></td><td>${totalCGST.toFixed(2)}</td><td></td><td>${totalSGST.toFixed(2)}</td><td>${(totalAmount + totalCGST + totalSGST).toFixed(2)}</td></tr>`;
+  
+  const formatDate = (d) => {
+    const date = new Date(d);
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${date.getDate().toString().padStart(2,'0')}-${months[date.getMonth()]}-${date.getFullYear().toString().slice(-2)}`;
+  };
+  
+  const invoiceHTML = `
+    <div class="inv-header"><h1>INVOICE</h1><p style="text-align: right; font-size: 0.9em;">e-Invoice</p></div>
+    <div class="inv-info">
+      <p><b>IRN:</b> ${document.getElementById('irn').value}</p>
+      <p><b>Ack No.:</b> ${document.getElementById('ackNo').value}</p>
+      <p><b>Ack Date:</b> ${formatDate(document.getElementById('ackDate').value)}</p>
+    </div>
+    <div class="inv-grid">
+      <div class="inv-section">
+        <h3>${document.getElementById('companyName').value}</h3>
+        <p>${document.getElementById('companyAddress1').value}</p>
+        <p>${document.getElementById('companyAddress2').value}</p>
+        <p><b>GSTIN/UIN:</b> ${document.getElementById('companyGSTIN').value}</p>
+        <p><b>State Name:</b> ${document.getElementById('companyState').value}</p>
+        <p><b>E-Mail:</b> ${document.getElementById('companyEmail').value}</p>
+        <h3 style="margin-top: 15px;">Consignee (Ship to)</h3>
+        <p><b>${document.getElementById('buyerName').value}</b></p>
+        <p>${document.getElementById('buyerAddress1').value}</p>
+        <p>${document.getElementById('buyerAddress2').value}</p>
+        <p><b>GSTIN/UIN:</b> ${document.getElementById('buyerGSTIN').value}</p>
+        <p><b>State Name:</b> ${document.getElementById('buyerState').value}</p>
+      </div>
+      <div class="inv-section">
+        <p><b>Invoice No.:</b> ${document.getElementById('invoiceNo').value}</p>
+        <p><b>Dated:</b> ${formatDate(document.getElementById('invoiceDate').value)}</p>
+        <p><b>Delivery Note:</b></p>
+        <p><b>Mode/Terms of Payment:</b> ${document.getElementById('paymentTerms').value}</p>
+        <p><b>Reference No. & Date:</b></p>
+        <p><b>Other References:</b></p>
+        <p><b>Buyer's Order No.:</b></p>
+        <p><b>Dated:</b></p>
+        <p><b>Dispatch Doc No.:</b></p>
+        <p><b>Delivery Note Date:</b></p>
+        <p><b>Dispatched through:</b> ${document.getElementById('dispatchedThrough').value}</p>
+        <p><b>Destination:</b> ${document.getElementById('destination').value}</p>
+        <p><b>Bill of Lading/LR-RR No.:</b> ${document.getElementById('billOfLading').value}</p>
+        <p><b>Motor Vehicle No:</b> ${document.getElementById('vehicleNo').value}</p>
+        <p><b>Terms of Delivery:</b></p>
+      </div>
+    </div>
+    <div class="inv-section">
+      <h3>Buyer (Bill to)</h3>
+      <p><b>${document.getElementById('buyerName').value}</b></p>
+      <p>${document.getElementById('buyerAddress1').value}</p>
+      <p>${document.getElementById('buyerAddress2').value}</p>
+      <p><b>GSTIN/UIN:</b> ${document.getElementById('buyerGSTIN').value}</p>
+      <p><b>State Name:</b> ${document.getElementById('buyerState').value}</p>
+    </div>
+    <table class="inv-table"><thead><tr><th>Sl</th><th>Description of Goods</th><th>HSN/SAC</th><th>Quantity</th><th>Rate</th><th>per</th><th>Amount</th></tr></thead><tbody>${itemsHTML}</tbody></table>
+    <div class="inv-words"><b>Amount Chargeable (in words):</b><br>INR ${numberToWords(roundedTotal)} Only</div>
+    <div class="inv-tax"><p style="text-align:right; font-style: italic; margin-bottom: 5px;">E & O.E</p><table class="tax-table"><thead><tr><th rowspan="2">HSN/SAC</th><th rowspan="2">Taxable Value</th><th colspan="2">CGST</th><th colspan="2">SGST/UTGST</th><th rowspan="2">Total Tax Amount</th></tr><tr><th>Rate</th><th>Amount</th><th>Rate</th><th>Amount</th></tr></thead><tbody>${taxHTML}</tbody></table></div>
+    <div class="inv-words" style="margin-top: 15px;"><b>Tax Amount (in words):</b> INR ${numberToWords(Math.round(totalCGST + totalSGST))} Only</div>
+    <div class="inv-bank"><p><b>Company's Bank Details</b></p><p><b>A/c Holder's Name:</b> ${document.getElementById('companyName').value}</p><p><b>Bank Name:</b> ${document.getElementById('bankName').value}</p><p><b>A/c No.:</b> ${document.getElementById('accountNo').value}</p><p><b>Branch & IFS Code:</b> ${document.getElementById('ifscCode').value}</p></div>
+    <div class="inv-decl"><p><b>Declaration</b></p><p>We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.</p></div>
+    <div class="inv-sign"><p><b>for ${document.getElementById('companyName').value}</b></p><br><br><p>Authorised Signatory</p></div>
+    <div class="inv-footer"><p>SUBJECT TO ALL JURISDICTION IN AMBIKAPUR COURT JURISDICTION</p><p>This is a Computer Generated Invoice</p></div>
+  `;
+  
+  document.getElementById('invoiceContainer').innerHTML = invoiceHTML;
+  document.getElementById('invoicePreview').style.display = 'block';
+  document.getElementById('invoicePreview').scrollIntoView({ behavior: 'smooth' });
+}
+
+function downloadPDF() { window.print(); }
+function clearForm() { if (confirm('Are you sure you want to clear all fields?')) location.reload(); }
+</script>
+</body>
+</html>
